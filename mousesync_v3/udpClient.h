@@ -10,37 +10,13 @@
 #include "crc32.h"
 #include "udpPacket.h"
 
-const static bool __unused_static_initializer = []()
+const static bool __udpClient_static_initializer = []()
 {
 	WSADATA data;
 	WSAStartup(MAKEWORD(2, 2), &data);
 
 	return true;
 }();
-
-template<class T>
-class udpObjHeader
-{
-public:
-	size_t typeHash;
-	size_t typeSize;
-
-	udpObjHeader()
-	{
-		this->typeHash = typeHasher::getHash<T>();
-		this->typeSize = sizeof(T);
-	}
-
-	bool operator==(udpObjHeader other)
-	{
-		return this->typeHash == other.typeHash && this->typeSize == other.typeSize;
-	}
-
-	bool operator!=(udpObjHeader other)
-	{
-		return !(*this == other);
-	}
-};
 
 class udpClient
 {
@@ -66,12 +42,11 @@ public:
 	bool sendObj(T& obj)
 	{
 		udpObjPacketHeader<T> header(obj);
-		int headerBytes, objBytes;
-		if (!sendRaw(&header, sizeof(header), &headerBytes) || headerBytes != sizeof(header))
+		if (!sendInternal(&header, sizeof(header)))
 		{
 			return false;
 		}
-		if (!sendRaw(&obj, sizeof(obj), &objBytes) || objBytes != sizeof(obj))
+		if (!sendInternal(&obj, sizeof(obj)))
 		{
 			return false;
 		}
@@ -86,15 +61,15 @@ public:
 	{
 		udpObjPacketHeader<T> header(obj), realHeader(obj);
 		int headerBytes, objBytes;
-		if (!receiveRaw(&header, sizeof(header), &headerBytes) || headerBytes != sizeof(header))
+		if (!receiveInternal(&header, sizeof(header)))
 		{
 			return false;
 		}
-		else if (header.type != realHeader.type || header.hash != realHeader.hash || header.length != realHeader.length || header.type != realHeader.type)
+		else if (header.type != realHeader.type || header.hash != realHeader.hash || header.length != realHeader.length || header.magic != realHeader.magic)
 		{
 			return false;
 		}
-		else if(!receiveRaw(&obj, sizeof(T), &objBytes) || objBytes != sizeof(T))
+		else if(!receiveInternal(&obj, sizeof(T)))
 		{
 			return false;
 		}
@@ -110,26 +85,69 @@ public:
 
 	bool sendRaw(void* buffer, int length)
 	{
-		int bytesSent;
-		return sendRaw(buffer, length, &bytesSent);
-	}
-
-	bool sendRaw(void* buffer, int length, int* bytesSent)
-	{
-		*bytesSent = sendto(socket, (char*)buffer, length, 0, (sockaddr*)&dst, sizeof(dst));
-		return *bytesSent != SOCKET_ERROR;
+		udpRawPacketHeader header(buffer, length);
+		if (!sendInternal(&header, sizeof(header)))
+		{
+			return false;
+		}
+		else if (!sendInternal(buffer, length))
+		{
+			return false;
+		}
+		else
+		{
+			return true;
+		}
 	}
 
 	bool receiveRaw(void* buffer, int length)
 	{
-		int bytesReceived;
-		return receiveRaw(buffer, length, &bytesReceived);
+		udpRawPacketHeader header(buffer, length), realHeader(buffer, length);
+		if (!receiveInternal(&header, sizeof(header)))
+		{
+			return false;
+		}
+		else if (header.type != realHeader.type || header.length != realHeader.length || header.magic != realHeader.magic)
+		{
+			return false;
+		}
+		else if (!receiveInternal(buffer, length))
+		{
+			return false;
+		}
+		else if (header.crc32 != calculateCRC32(buffer, length))
+		{
+			return false;
+		}
+		else
+		{
+			return true;
+		}
 	}
 
-	bool receiveRaw(void* buffer, int length, int* bytesReceived)
+private:
+	bool sendInternal(void* buffer, int length)
 	{
-		*bytesReceived = recvfrom(socket, (char*)buffer, length, 0, 0, 0);
-		return *bytesReceived != SOCKET_ERROR;
+		int bytesSent = sendto(socket, (char*)buffer, length, 0, (sockaddr*)&dst, sizeof(dst));
+		return bytesSent != SOCKET_ERROR && bytesSent == length;
+	}
+
+	bool receiveInternal(void* buffer, int length)
+	{
+		int bytesReceived = recvfrom(socket, (char*)buffer, length, 0, 0, 0);
+		return bytesReceived != SOCKET_ERROR && bytesReceived == length;
+	}
+
+	bool sendInternal(void* buffer, int length, int& bytesSent)
+	{
+		bytesSent = sendto(socket, (char*)buffer, length, 0, (sockaddr*)&dst, sizeof(dst));
+		return bytesSent != SOCKET_ERROR && bytesSent == length;
+	}
+
+	bool receiveInternal(void* buffer, int length, int& bytesReceived)
+	{
+		bytesReceived = recvfrom(socket, (char*)buffer, length, 0, 0, 0);
+		return bytesReceived != SOCKET_ERROR && bytesReceived == length;
 	}
 };
 
