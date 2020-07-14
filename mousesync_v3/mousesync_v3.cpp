@@ -27,8 +27,10 @@ int main(int argc, char* argv[])
 		for (;;)
 		{
 			testStruct t;
-			client.receiveObj(t);
-			std::cout << "T: " << t.t << "F: " << t.f << "\n";
+			if (client.receiveObj(t))
+			{
+				std::cout << "T: " << t.t << "F: " << t.f << "\n";
+			}
 		}
 	}
 	else
@@ -39,10 +41,10 @@ int main(int argc, char* argv[])
 		std::cin >> dstIp;
 
 		udpClient client(8080, dstIp, 8080);
+		testStruct t;
 
 		for (;;)
 		{
-			testStruct t;
 			client.sendObj(t);
 		}
 	}
