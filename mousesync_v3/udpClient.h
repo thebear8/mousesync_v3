@@ -65,7 +65,7 @@ public:
 	template<class T>
 	bool sendObj(T& obj)
 	{
-		udpObjPacketHeader<T> header(&obj);
+		udpObjPacketHeader<T> header(obj);
 		int headerBytes, objBytes;
 		if (!sendRaw(&header, sizeof(header), &headerBytes) || headerBytes != sizeof(header))
 		{
@@ -84,7 +84,7 @@ public:
 	template<class T>
 	bool receiveObj(T& obj)
 	{
-		udpObjPacketHeader<T> header(&obj), realHeader(&obj);
+		udpObjPacketHeader<T> header(obj), realHeader(obj);
 		int headerBytes, objBytes;
 		if (!receiveRaw(&header, sizeof(header), &headerBytes) || headerBytes != sizeof(header))
 		{
