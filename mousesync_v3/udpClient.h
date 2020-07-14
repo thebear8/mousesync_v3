@@ -7,6 +7,8 @@
 #pragma comment(lib, "ws2_32.lib")
 
 #include "typeHasher.h"
+#include "crc32.h"
+#include "udpPacket.h"
 
 const static bool __unused_static_initializer = []()
 {
@@ -63,7 +65,7 @@ public:
 	template<class T>
 	bool sendObj(T& obj)
 	{
-		udpObjHeader<T> header;
+		udpObjPacketHeader<T> header(&obj);
 		int headerBytes, objBytes;
 		if (!sendRaw(&header, sizeof(header), &headerBytes) || headerBytes != sizeof(header))
 		{
@@ -82,17 +84,21 @@ public:
 	template<class T>
 	bool receiveObj(T& obj)
 	{
-		udpObjHeader<T> header, realHeader;
+		udpObjPacketHeader<T> header(&obj), realHeader(&obj);
 		int headerBytes, objBytes;
 		if (!receiveRaw(&header, sizeof(header), &headerBytes) || headerBytes != sizeof(header))
 		{
 			return false;
 		}
-		else if (header.typeHash != realHeader.typeHash || header.typeSize != realHeader.typeSize)
+		else if (header.type != realHeader.type || header.hash != realHeader.hash || header.length != realHeader.length || header.type != realHeader.type)
 		{
 			return false;
 		}
 		else if(!receiveRaw(&obj, sizeof(T), &objBytes) || objBytes != sizeof(T))
+		{
+			return false;
+		}
+		else if (header.crc32 != calculateCRC32(&obj, sizeof(T)))
 		{
 			return false;
 		}

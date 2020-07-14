@@ -64,14 +64,14 @@ static uint32_t crc32_tab[] =
 };
 
 /* crc32 hash */
-uint32_t crc32(const char* s, int len)
+uint32_t calculateCRC32(const void* s, int len)
 {
     int i;
     uint32_t crc32val = 0;
     crc32val ^= 0xFFFFFFFF;
 
     for (i = 0;  i < len;  i++) {
-        crc32val = crc32_tab[(crc32val ^ s[i]) & 0xFF] ^ ((crc32val >> 8) & 0x00FFFFFF);
+        crc32val = crc32_tab[(crc32val ^ ((char const*)s)[i]) & 0xFF] ^ ((crc32val >> 8) & 0x00FFFFFF);
     }
 
     return labs(crc32val ^ 0xFFFFFFFF);
