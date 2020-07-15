@@ -27,9 +27,6 @@
     <ClCompile Include="udpPacket.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
-    <ClCompile Include="crc32.c">
-      <Filter>Quelldateien</Filter>
-    </ClCompile>
     <ClCompile Include="keyboardEvent.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
@@ -42,9 +39,6 @@
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="udpPacket.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="crc32.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="keyboardEvent.h">

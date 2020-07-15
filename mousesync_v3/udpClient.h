@@ -7,7 +7,6 @@
 #pragma comment(lib, "ws2_32.lib")
 
 #include "typeHasher.h"
-#include "crc32.h"
 #include "udpPacket.h"
 
 const static bool __udpClient_static_initializer = []()
@@ -73,10 +72,6 @@ public:
 		{
 			return false;
 		}
-		else if (header.crc32 != calculateCRC32(&obj, sizeof(T)))
-		{
-			return false;
-		}
 		else
 		{
 			return true;
@@ -112,10 +107,6 @@ public:
 			return false;
 		}
 		else if (!receiveInternal(buffer, length))
-		{
-			return false;
-		}
-		else if (header.crc32 != calculateCRC32(buffer, length))
 		{
 			return false;
 		}

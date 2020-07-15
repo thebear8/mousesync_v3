@@ -152,7 +152,6 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="crc32.c" />
     <ClCompile Include="keyboardEvent.cpp" />
     <ClCompile Include="mousesync_v3.cpp" />
     <ClCompile Include="typeHasher.cpp" />
@@ -160,7 +159,6 @@
     <ClCompile Include="udpPacket.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="crc32.h" />
     <ClInclude Include="keyboardEvent.h" />
     <ClInclude Include="typeHasher.h" />
     <ClInclude Include="udpClient.h" />
