@@ -4,30 +4,30 @@
 class mouseHook
 {
 private:
-	HHOOK hook;
+	HHOOK hhook;
 	LPARAM (__stdcall *callBack)(int nCode, WPARAM wp, MSLLHOOKSTRUCT* info);
 
 public:
 	mouseHook(LPARAM(__stdcall* callBack)(int nCode, WPARAM wp, MSLLHOOKSTRUCT* info))
 	{
-		this->hook = 0;
+		this->hhook = 0;
 		this->callBack = callBack;
 	}
 
 	bool hook()
 	{
-		this->hook = SetWindowsHookExW(WH_MOUSE_LL, (HOOKPROC)callBack, 0, 0);
+		this->hhook = SetWindowsHookExW(WH_MOUSE_LL, (HOOKPROC)callBack, 0, 0);
 	}
 
 	bool unHook()
 	{
-		UnhookWindowsHookEx(hook);
-		this->hook = 0;
+		UnhookWindowsHookEx(hhook);
+		this->hhook = 0;
 	}
 
 	HHOOK getHook()
 	{
-		return hook;
+		return hhook;
 	}
 };
 
