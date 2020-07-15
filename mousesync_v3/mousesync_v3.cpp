@@ -88,6 +88,9 @@ int main(int argc, char* argv[])
 		std::cin >> dstIp;
 		udpClient client(8080, dstIp, 8080);
 
+		mHook.hook();
+		kbHook.hook();
+
 		for (;;)
 		{
 			inputEvent iEvent;
