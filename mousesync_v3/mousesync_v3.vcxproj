@@ -153,6 +153,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="inputEvent.cpp" />
+    <ClCompile Include="inputEventDispatcher.cpp" />
     <ClCompile Include="keyboardEvent.cpp" />
     <ClCompile Include="keyboardHook.cpp" />
     <ClCompile Include="mouseEvent.cpp" />
@@ -163,7 +164,9 @@
     <ClCompile Include="udpPacket.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="concurrentqueue.h" />
     <ClInclude Include="inputEvent.h" />
+    <ClInclude Include="inputEventDispatcher.h" />
     <ClInclude Include="keyboardEvent.h" />
     <ClInclude Include="keyboardHook.h" />
     <ClInclude Include="mouseEvent.h" />

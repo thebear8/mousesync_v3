@@ -24,5 +24,10 @@ public:
 		UnhookWindowsHookEx(hook);
 		this->hook = 0;
 	}
+
+	HHOOK getHook()
+	{
+		return hook;
+	}
 };
 

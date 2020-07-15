@@ -6,7 +6,8 @@ enum class inputEventType
 {
 	mouse,
 	keyboard,
-	management
+	management,
+	unknown
 };
 
 struct inputEvent
@@ -14,6 +15,11 @@ struct inputEvent
 	mouseEvent mouse;
 	keyboardEvent keyboard;
 	inputEventType type;
+
+	inputEvent()
+	{
+		this->type = inputEventType::unknown;
+	}
 
 	inputEvent(keyboardEvent kbEvent)
 	{

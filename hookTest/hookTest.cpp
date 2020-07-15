@@ -38,14 +38,14 @@ LRESULT CALLBACK mouseProc(int nCode, WPARAM wParam, LPARAM lParam)
 		{
 		case WM_LBUTTONDOWN: std::cout << "WM_LBUTTONDOWN" << "\n"; break;
 		case WM_LBUTTONUP: std::cout << "WM_LBUTTONUP" << "\n"; break;
-		case WM_MOUSEMOVE: std::cout << "WM_MOUSEMOVE X: " << info->pt.x << " Y: " << info->pt.y << "\n"; break;
+		case WM_MOUSEMOVE: /*std::cout << "WM_MOUSEMOVE X: " << info->pt.x << " Y: " << info->pt.y << "\n";*/ break;
 		case WM_MOUSEWHEEL: std::cout << "WM_MOUSEWHEEL" << "\n"; break;
 		case WM_MOUSEHWHEEL: std::cout << "WM_MOUSEHWHEEL" << "\n"; break;
 		case WM_RBUTTONDOWN: std::cout << "WM_RBUTTONDOWN" << "\n"; break;
 		case WM_RBUTTONUP: std::cout << "WM_RBUTTONUP" << "\n"; break;
 		case WM_XBUTTONDOWN: std::cout << "WM_XBUTTONDOWN" << "\n"; break;
 		case WM_XBUTTONUP: std::cout << "WM_XBUTTONUP" << "\n"; break;
-		//default: std::cout << "UNKNOWN" << "\n"; break;
+		default: std::cout << "UNKNOWN: " << wParam <<"\n"; break;
 		}
 	}
 

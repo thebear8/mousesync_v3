@@ -1,101 +1,68 @@
 #pragma once
 #include <Windows.h>
 
-enum class mouseEventType
+struct mouseEvent : MOUSEINPUT
 {
-	lButtonDown,
-	lButtonUp,
-	rButtonDown,
-	rButtonUp,
-	xButton1Down,
-	xButton1Up,
-	xButton2Down,
-	xButton2Up,
-
-	move,
-	wheel,
-	hWheel,
-
-	unknown,
-};
-
-struct mouseEvent
-{
-	float x, y;
-	DWORD wheelDelta;
-	mouseEventType type;
-
 	mouseEvent()
 	{
-		this->x = 0;
-		this->y = 0;
-		this->wheelDelta = 0;
-		this->type = mouseEventType::unknown;
+		this->dx = 0;
+		this->dy = 0;
+		this->dwFlags = 0;
+		this->mouseData = 0;
 	}
 
-	mouseEvent(MSLLHOOKSTRUCT* info, DWORD type)
+	mouseEvent(DWORD type, MSLLHOOKSTRUCT* info)
 	{
-		this->x = ((float)info->pt.x) / ((float)GetSystemMetrics(SM_CXSCREEN));
-		this->y = ((float)info->pt.y) / ((float)GetSystemMetrics(SM_CYSCREEN));
-		this->wheelDelta = 0;
+		this->dx = ((float)info->pt.x) / ((float)GetSystemMetrics(SM_CXSCREEN)) * 65536.f;
+		this->dy = ((float)info->pt.y) / ((float)GetSystemMetrics(SM_CYSCREEN)) * 65536.f;
+		this->dwFlags = 0;
+		this->mouseData = 0;
 
 		switch (type)
 		{
 		case WM_LBUTTONDOWN:
-			this->type = mouseEventType::lButtonDown;
+			this->dwFlags = MOUSEEVENTF_LEFTDOWN;
 			break;
 		case WM_LBUTTONUP:
-			this->type = mouseEventType::lButtonUp;
+			this->dwFlags = MOUSEEVENTF_LEFTUP;
 			break;
-		case WM_MOUSEMOVE:
-			this->type = mouseEventType::move;
+		case WM_MBUTTONDOWN:
+			this->dwFlags = MOUSEEVENTF_MIDDLEDOWN;
 			break;
-		case WM_MOUSEWHEEL:
-			this->type = mouseEventType::wheel;
-			this->wheelDelta = HIWORD(info->mouseData);
-			break;
-		case WM_MOUSEHWHEEL:
-			this->type = mouseEventType::hWheel;
-			this->wheelDelta = HIWORD(info->mouseData);
+		case WM_MBUTTONUP:
+			this->dwFlags = MOUSEEVENTF_MIDDLEUP;
 			break;
 		case WM_RBUTTONDOWN:
-			this->type = mouseEventType::rButtonDown;
+			this->dwFlags = MOUSEEVENTF_RIGHTDOWN;
 			break;
 		case WM_RBUTTONUP:
-			this->type = mouseEventType::rButtonUp;
+			this->dwFlags = MOUSEEVENTF_RIGHTUP;
 			break;
+
+		case WM_MOUSEMOVE:
+			this->dwFlags = MOUSEEVENTF_MOVE;
+			break;
+
+		case WM_MOUSEWHEEL:
+			this->dwFlags = MOUSEEVENTF_WHEEL;
+			this->mouseData = HIWORD(info->mouseData);
+			break;
+		case WM_MOUSEHWHEEL:
+			this->dwFlags = MOUSEEVENTF_HWHEEL;
+			this->mouseData = HIWORD(info->mouseData);
+			break;
+
 		case WM_XBUTTONDOWN:
-			if (HIWORD(info->mouseData) == XBUTTON1)
-			{
-				this->type = mouseEventType::xButton1Down;
-			}
-			else if (HIWORD(info->mouseData) == XBUTTON2)
-			{
-				this->type = mouseEventType::xButton2Down;
-			}
-			else
-			{
-				this->type = mouseEventType::unknown;
-			}
+			this->dwFlags = MOUSEEVENTF_XDOWN;
+			this->mouseData = HIWORD(info->mouseData);
 			break;
 		case WM_XBUTTONUP:
-			if (HIWORD(info->mouseData) == XBUTTON1)
-			{
-				this->type = mouseEventType::xButton1Up;
-			}
-			else if (HIWORD(info->mouseData) == XBUTTON2)
-			{
-				this->type = mouseEventType::xButton2Up;
-			}
-			else
-			{
-				this->type = mouseEventType::unknown;
-			}
-			break;
-		default:
-			this->type = mouseEventType::unknown;
+			this->dwFlags = MOUSEEVENTF_XUP;
+			this->mouseData = HIWORD(info->mouseData);
 			break;
 		}
+
+		this->dwFlags |= MOUSEEVENTF_ABSOLUTE;
 	}
 };
 

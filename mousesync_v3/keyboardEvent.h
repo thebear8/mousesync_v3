@@ -1,37 +1,39 @@
 #pragma once
 #include <Windows.h>
 
-enum class keyboardEventType
+struct keyboardEvent : KEYBDINPUT
 {
-	keyDown,
-	keyUp,
-	sysKeyDown,
-	sysKeyUp,
-	unknown
-};
+	/*DWORD vkCode;
+	DWORD scanCode;
 
-struct keyboardEvent
-{
-	DWORD vkCode;
-	keyboardEventType type;
+	bool keyUp;
+	bool extended;
+
+	bool isValid;*/
 
 	keyboardEvent()
 	{
-		this->vkCode = 0;
-		this->type = keyboardEventType::unknown;
+		this->wVk = 0;
+		this->wScan = 0;
+		this->dwFlags = 0;
+		this->time = 0;
+		this->dwExtraInfo = 0;
 	}
 
-	keyboardEvent(DWORD vkCode, DWORD type)
+	keyboardEvent(DWORD type, KBDLLHOOKSTRUCT* info)
 	{
-		this->vkCode = vkCode;
+		this->wVk = info->vkCode;
+		this->wScan = info->scanCode;
+		this->dwFlags |= (!!(info->flags & LLKHF_EXTENDED)) * KEYEVENTF_EXTENDEDKEY;
+		this->time = 0;
+		this->dwExtraInfo = 0;
 
 		switch (type)
 		{
-		case WM_KEYDOWN: this->type = keyboardEventType::keyDown; break;
-		case WM_KEYUP: this->type = keyboardEventType::keyUp; break;
-		case WM_SYSKEYDOWN: this->type = keyboardEventType::sysKeyDown; break;
-		case WM_SYSKEYUP: this->type = keyboardEventType::sysKeyUp; break;
-		default: this->type = keyboardEventType::unknown;
+		case WM_KEYDOWN: this->dwFlags &= ~KEYEVENTF_KEYUP; break;
+		case WM_KEYUP: this->dwFlags |= KEYEVENTF_KEYUP; break;
+		case WM_SYSKEYDOWN: this->dwFlags &= ~KEYEVENTF_KEYUP; break;
+		case WM_SYSKEYUP: this->dwFlags |= KEYEVENTF_KEYUP; break;
 		}
 	}
 };
