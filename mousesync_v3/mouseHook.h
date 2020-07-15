@@ -14,12 +14,12 @@ public:
 		this->callBack = callBack;
 	}
 
-	bool hook()
+	void hook()
 	{
 		this->hhook = SetWindowsHookExW(WH_MOUSE_LL, (HOOKPROC)callBack, 0, 0);
 	}
 
-	bool unHook()
+	void unHook()
 	{
 		UnhookWindowsHookEx(hhook);
 		this->hhook = 0;
