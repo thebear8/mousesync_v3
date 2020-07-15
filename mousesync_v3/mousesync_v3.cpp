@@ -7,6 +7,16 @@ struct testStruct
 	float f = 1.12345;
 };
 
+LPARAM __stdcall mouseProc(int nCode, WPARAM wp, MSLLHOOKSTRUCT* info)
+{
+
+}
+
+LPARAM __stdcall keyboardProc(int nCode, WPARAM wp, KBDLLHOOKSTRUCT* info)
+{
+
+}
+
 int main(int argc, char* argv[])
 {
 	if (argc <= 1)

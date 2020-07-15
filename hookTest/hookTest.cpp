@@ -1,7 +1,7 @@
 #include <iostream>
 #include <Windows.h>
 
-HHOOK kbHook;
+HHOOK kbHook, mHook;
 
 LRESULT CALLBACK keyboardProc(int nCode, WPARAM wParam, LPARAM lParam)
 {
@@ -28,9 +28,34 @@ LRESULT CALLBACK keyboardProc(int nCode, WPARAM wParam, LPARAM lParam)
 	return CallNextHookEx(kbHook, nCode, wParam, lParam);
 }
 
+LRESULT CALLBACK mouseProc(int nCode, WPARAM wParam, LPARAM lParam)
+{
+	if (nCode == HC_ACTION)
+	{
+		MSLLHOOKSTRUCT* info = (MSLLHOOKSTRUCT*)lParam;
+
+		switch (wParam)
+		{
+		case WM_LBUTTONDOWN: std::cout << "WM_LBUTTONDOWN" << "\n"; break;
+		case WM_LBUTTONUP: std::cout << "WM_LBUTTONUP" << "\n"; break;
+		case WM_MOUSEMOVE: std::cout << "WM_MOUSEMOVE X: " << info->pt.x << " Y: " << info->pt.y << "\n"; break;
+		case WM_MOUSEWHEEL: std::cout << "WM_MOUSEWHEEL" << "\n"; break;
+		case WM_MOUSEHWHEEL: std::cout << "WM_MOUSEHWHEEL" << "\n"; break;
+		case WM_RBUTTONDOWN: std::cout << "WM_RBUTTONDOWN" << "\n"; break;
+		case WM_RBUTTONUP: std::cout << "WM_RBUTTONUP" << "\n"; break;
+		case WM_XBUTTONDOWN: std::cout << "WM_XBUTTONDOWN" << "\n"; break;
+		case WM_XBUTTONUP: std::cout << "WM_XBUTTONUP" << "\n"; break;
+		//default: std::cout << "UNKNOWN" << "\n"; break;
+		}
+	}
+
+	return CallNextHookEx(mHook, nCode, wParam, lParam);
+}
+
 int main()
 {
-	SetWindowsHookExA(WH_KEYBOARD_LL, keyboardProc, 0, 0);
+	kbHook = SetWindowsHookExA(WH_KEYBOARD_LL, keyboardProc, 0, 0);
+	mHook = SetWindowsHookExA(WH_MOUSE_LL, mouseProc, 0, 0);
 
 	MSG msg;
 	while (GetMessageA(&msg, 0, 0, 0))

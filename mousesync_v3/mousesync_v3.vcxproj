@@ -152,14 +152,22 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="inputEvent.cpp" />
     <ClCompile Include="keyboardEvent.cpp" />
+    <ClCompile Include="keyboardHook.cpp" />
+    <ClCompile Include="mouseEvent.cpp" />
+    <ClCompile Include="mouseHook.cpp" />
     <ClCompile Include="mousesync_v3.cpp" />
     <ClCompile Include="typeHasher.cpp" />
     <ClCompile Include="udpClient.cpp" />
     <ClCompile Include="udpPacket.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="inputEvent.h" />
     <ClInclude Include="keyboardEvent.h" />
+    <ClInclude Include="keyboardHook.h" />
+    <ClInclude Include="mouseEvent.h" />
+    <ClInclude Include="mouseHook.h" />
     <ClInclude Include="typeHasher.h" />
     <ClInclude Include="udpClient.h" />
     <ClInclude Include="udpPacket.h" />
