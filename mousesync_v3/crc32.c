@@ -66,6 +66,8 @@ static uint32_t crc32_tab[] =
 /* crc32 hash */
 uint32_t calculateCRC32(const void* s, int len)
 {
+    return 0;
+
     int i;
     uint32_t crc32val = 0;
     crc32val ^= 0xFFFFFFFF;
